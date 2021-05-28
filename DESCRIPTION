@@ -1,0 +1,19 @@
+Package: VASIDEA
+Title: VASI Differential Expression Analysis
+Version: 0.1
+Authors@R: 
+    person(given = "Boris",
+           family = "Hejblum",
+           role = c("aut", "cre"),
+           email = "boris.hejblum@u-bordeaux.fr")
+Description: VASI module for Differential Expression Analysis relying on the dearseq method
+License: What license is it under?
+Depends:
+    dearseq
+Imports: 
+    config (>= 0.3.1),
+    golem (>= 0.3.1),
+    shiny (>= 1.6.0)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
