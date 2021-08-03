@@ -19,61 +19,63 @@ app_ui <- function(request) {
         
         # Sidebar panel for inputs ----
         sidebarPanel(
+          mod_config_ui("config_ui_1"),
           
-          # Input: Select a file ----
-          fileInput("expr", "Load expression data",
-                    multiple = FALSE,
-                    accept = c("text/csv",
-                               "text/comma-separated-values,text/plain",
-                               ".csv",
-                               ".txt"
-                               )),
-          
-          actionButton("createExpression",label = "generate ExpressionData"),
-          
-          # Input: Select separator ----
-          radioButtons("sep_expr", "Separator",
-                       choices = c(Comma = ",",
-                                   Semicolon = ";",
-                                   Tab = "\t"),
-                       selected = ","),
-          
-        #),
-        
-        #sidebarPanel(
-        
-        # Horizontal line ----
-        tags$hr(),
-        
-          # Input: Select a file ----
-          fileInput("design", "Load metadata",
-                    multiple = FALSE,
-                    accept = c("text/csv",
-                               "text/comma-separated-values,text/plain",
-                               ".csv",
-                               ".txt"
-                    )),
-          
-          actionButton("createMeta",label = "generate metaData"),
-          # Input: Select separator ----
-          radioButtons("sep_design", "Separator",
-                       choices = c(Comma = ",",
-                                   Semicolon = ";",
-                                   Tab = "\t"),
-                       selected = ","),
-          actionButton("compute",label = "Compute")
+        #   # Input: Select a file ----
+        #   fileInput("expr", "Load expression data",
+        #             multiple = FALSE,
+        #             accept = c("text/csv",
+        #                        "text/comma-separated-values,text/plain",
+        #                        ".csv",
+        #                        ".txt"
+        #                        )),
+        #   
+        #   actionButton("createExpression",label = "generate ExpressionData"),
+        #   
+        #   # Input: Select separator ----
+        #   radioButtons("sep_expr", "Separator",
+        #                choices = c(Comma = ",",
+        #                            Semicolon = ";",
+        #                            Tab = "\t"),
+        #                selected = ","),
+        #   
+        # #),
+        # 
+        # #sidebarPanel(
+        # 
+        # # Horizontal line ----
+        # tags$hr(),
+        # 
+        #   # Input: Select a file ----
+        #   fileInput("design", "Load metadata",
+        #             multiple = FALSE,
+        #             accept = c("text/csv",
+        #                        "text/comma-separated-values,text/plain",
+        #                        ".csv",
+        #                        ".txt"
+        #             )),
+        #   
+        #   actionButton("createMeta",label = "generate metaData"),
+        #   # Input: Select separator ----
+        #   radioButtons("sep_design", "Separator",
+        #                choices = c(Comma = ",",
+        #                            Semicolon = ";",
+        #                            Tab = "\t"),
+        #                selected = ","),
+        #   actionButton("compute",label = "Compute")
           
         ),
         
         # Main panel for displaying outputs ----
         mainPanel(
+          mod_result_ui("result_ui_1")
           #DT::dataTableOutput("metadata")
           # Output: Data file ----
-           tabsetPanel(type = "tabs", id="tabPanel",
-             tabPanel("MetaData",DT::dataTableOutput("metadata")),
-             tabPanel("Graph",plotOutput("result")),
-             tabPanel("result",DT::dataTableOutput("contents"))
-           )
+           # tabsetPanel(type = "tabs", id="tabPanel",
+           #   tabPanel("MetaData",DT::dataTableOutput("metadata")),
+           #   tabPanel("Graph",plotOutput("result")),
+           #   tabPanel("result",DT::dataTableOutput("contents"))
+           # )
 
         )
         
