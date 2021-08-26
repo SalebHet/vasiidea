@@ -1,6 +1,30 @@
 library(RSelenium)
 library(testthat)
 
+waitFor <- function(how,id){
+  #webElem <- NULL
+  
+  i <- 0
+  while(i<=1000){
+    webElem <<- tryCatch({remDr$findElement(using = how, value = id)},
+                         error = function(e){NULL})
+    #loop until element with name <value> is found in <webpage url>
+    
+    i <- i+1
+    if(!is.null(webElem)){
+      break()
+    }
+  }
+  if(!is.null(webElem)){
+    return(webElem)
+  }
+  else{
+    stop(paste0(id," not found \n"))
+  }
+}
+
+wd <- getwd()
+
 wd <- getwd()
 
 #Uncomment this for local test

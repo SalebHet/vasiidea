@@ -8,7 +8,10 @@ RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.6
 RUN Rscript -e 'remotes::install_version("config",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_version("spelling",upgrade="never", version = "2.2")'
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.1")'
-RUN Rscript -e 'remotes::install_version("dearseq",upgrade="never", version = "1.2.0")'
+RUN Rscript -e 'remotes::install_version("DT")'
+RUN Rscript -e 'remotes::install_version("BiocManager")'
+# ,upgrade="never", version = "3.13.0")'
+RUN Rscript -e 'BiocManager::install("dearseq")'
 RUN mkdir /build_zone
 ADD . /build_zone
 WORKDIR /build_zone

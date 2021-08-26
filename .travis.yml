@@ -1,0 +1,37 @@
+addons:
+  firefox: latest
+
+before_install:
+  - docker pull selenium/standalone-firefox:2.53.0
+- docker run -d -p 127.0.0.1:4455:4444 selenium/standalone-firefox:2.53.0
+#  - docker build -t rocker/tidyverse .
+#  - docker run -d -p 127.0.0.1:80:4567 rocker/tidyverse /bin/sh -c "cd /root/tidyverse; bundle exec foreman start;"
+#  - docker ps -a
+#  - docker run rocker/tidyverse /bin/sh -c "cd /root/tidyverse; bundle exec rake test"
+
+
+#script:
+#  - R -f inst/app/tests/run_shinyTest.R
+# only report coverage for the release version
+after_success:
+  # - Rscript -e 'library(vici)'
+  # - Rscript -e 'vici::run_app()'&
+  # - Rscript -e 'covr::codecov()'
+  # - test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'testthat::test_dir("tests")'
+  - docker stop $(docker ps -a -q)
+
+
+jobs:
+  include:
+  - stage : "Test"
+name : "TestThat"
+script : test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'devtools::install(); covr::codecov()'
+# - stage : "deploy"
+# deploy:
+#   provider: pages
+# skip_cleanup: true
+# github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+# keep_history: true
+# target_branch: test_deploy
+# on:
+#   branch: automTest
