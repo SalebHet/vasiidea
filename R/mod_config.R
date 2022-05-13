@@ -20,7 +20,7 @@ mod_config_ui <- function(id){
                          ".csv",
                          ".txt"
               )),
-    
+    actionButton(ns("UploadMatrice"), label = "Upload"),
     actionButton(ns("createExpression"),label = "generate ExpressionData"),
     
     # Input: Select separator ----
@@ -45,7 +45,7 @@ mod_config_ui <- function(id){
                          ".csv",
                          ".txt"
               )),
-    
+    actionButton(ns("UploadMeta"), label = "Upload"),
     actionButton(ns("createMeta"),label = "generate metaData"),
     # Input: Select separator ----
     radioButtons(ns("sep_design"), "Separator",
@@ -53,6 +53,11 @@ mod_config_ui <- function(id){
                              Semicolon = ";",
                              Tab = "\t"),
                  selected = ","),
+    selectizeInput(ns("compare"),label = "Column compare",choices =c(Choose = "", NULL)),
+    selectizeInput(ns("varCompare"),label = "Var Compare",choices =c(Choose = "", NULL),multiple=TRUE),
+    selectizeInput(ns("filter"),label = "Filter column",choices =c(Choose = "", NULL)),
+    selectizeInput(ns("filterVars"),label = "Filter Vars",choices =c(Choose = "", NULL),multiple=TRUE),
+    selectizeInput(ns("id"),label = "id",choices =c(Choose = "", NULL)),
     actionButton(ns("compute"),label = "Compute")
     
   )
