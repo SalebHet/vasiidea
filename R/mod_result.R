@@ -24,7 +24,7 @@ mod_result_ui <- function(id){
 #' @noRd 
 
 
-mod_result_server <- function(id,parent){
+mod_result_server <- function(id,parent,parentSession){
   options(shiny.maxRequestSize = 500*1024^2) 
   moduleServer( id, function(input, output, session){
     #ns <- session$ns
@@ -55,18 +55,23 @@ mod_result_server <- function(id,parent){
       #cat('colnames(metaData): \n')
       #cat(lstpossi)
       #browser()
-      # updateSelectizeInput(session, 'compare',
-      #                      selected = '',
-      #                      choices = c('',lstpossi)
-      # )
-      # updateSelectizeInput(session, 'filter',
-      #                      selected = '',
-      #                      choices = c('',lstpossi)
-      # )
-      # updateSelectizeInput(session, 'id',
-      #                      selected = '',
-      #                      choices = c('',lstpossi)
-      # )
+      #cat("parent$compare: ")
+      #cat(str(parent$ns),"\n")
+      updateSelectizeInput(parentSession, "compare",#session, parent$compare,
+                           selected = '',
+                           choices = c('',lstpossi),
+                           options = list(placeholder = 'Please select a variable below')
+      )
+      updateSelectizeInput(parentSession, "filter",#session, parent$filer,#'filter',
+                           selected = '',
+                           choices = c('',lstpossi),
+                           options = list(placeholder = 'Please select a variable below')
+      )
+      updateSelectizeInput(parentSession,"id",#session, parent$id,#'id',
+                           selected = '',
+                           choices = c('',lstpossi),
+                           options = list(placeholder = 'Please select a variable below')
+      )
       output$metadata <- DT::renderDataTable(metaData)
     })
 
@@ -157,8 +162,26 @@ mod_result_server <- function(id,parent){
     #   }
     # })
     
+    # observeEvent(parent$compare,{
+    #   available_var <- metaData[,parent$compare]
+    #   updateSelectizeInput(parentSession,"varCompare",
+    #                        selected = '',
+    #                        choices = c('',levels(as.factor(available_var))),
+    #                        options = list(placeholder = 'Please select a variable below'))
+    # })
+    
+    observeEvent(parent$filter,{
+      available_var <- metaData[,parent$filter]
+      #cat(str(available_var))
+      updateSelectizeInput(parentSession,"filterVars",
+                           selected = '',
+                           choices = c('',levels(as.factor(available_var))),
+                           options = list(placeholder = 'Please select a variable below'))
+    })
+    
     observeEvent(parent$compute,{
-      cat("Click compute ! \n")
+      library(dplyr)
+      cat("\n Click compute ! \n")
       #cat("expressionData: ")
       #cat(str(expressionData))
       #browser()
@@ -190,15 +213,17 @@ mod_result_server <- function(id,parent){
       metaDataCom <- as.data.frame(metaDataCom)
       #browser()
       metaDataCom$Série.Extraction <- factor(metaDataCom$Série.Extraction, levels = c(1,2,3,4,5,6,7,8,9,10,11))
-      metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
+      #filtre <- parent$filterVars
+      metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
       # design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
-      count_prick <- t(as.matrix(raw_counts_all[metaData_analysis$Sample.name.sample.sheet,]))
+      # count_prick <- t(as.matrix(raw_counts_all[metaData_analysis$Sample.name.sample.sheet,]))
+      count_prick <- t(as.matrix(raw_counts_all[metaData_analysis[,parent$id],]))
       #browser()
       i<-1
       #browser()
       while(i <= nrow(metaData_analysis)){
-        if(is.na(metaData_analysis[i,"Série.Extraction"])){
-          nom <- metaData_analysis[i,"Sample.name.sample.sheet"]
+        if(is.na(metaData_analysis[i,parent$compare])){#if(is.na(metaData_analysis[i,"Série.Extraction"])){
+          nom <- metaData_analysis[i,parent$id]#nom <- metaData_analysis[i,"Sample.name.sample.sheet"]
           cat("nom: ")
           cat(nom)
           cat("\n")
@@ -215,7 +240,8 @@ mod_result_server <- function(id,parent){
         }
       }
       #cat("Start Compute \n")
-      design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
+      design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,parent$compare,drop = FALSE]))
+      #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
       #browser()
       res_genes <- dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,2,drop = FALSE],
                       covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis$Sample.name,which_test = "asymptotic")

@@ -45,5 +45,5 @@ app_server <- function( input, output, session ) {
   #str(res)
   #metaData <- res[1]
   #expressionData <- res[2]
-  mod_result_server(id = "result_ui_1",parent =  config) #metaData,expressionData,
+  mod_result_server(id = "result_ui_1",parent = config$input,parentSession= config$session) #metaData,expressionData,
 }

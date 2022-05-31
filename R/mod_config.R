@@ -53,11 +53,17 @@ mod_config_ui <- function(id){
                              Semicolon = ";",
                              Tab = "\t"),
                  selected = ","),
-    selectizeInput(ns("compare"),label = "Column compare",choices =c(Choose = "", NULL)),
-    selectizeInput(ns("varCompare"),label = "Var Compare",choices =c(Choose = "", NULL),multiple=TRUE),
-    selectizeInput(ns("filter"),label = "Filter column",choices =c(Choose = "", NULL)),
-    selectizeInput(ns("filterVars"),label = "Filter Vars",choices =c(Choose = "", NULL),multiple=TRUE),
-    selectizeInput(ns("id"),label = "id",choices =c(Choose = "", NULL)),
+    selectizeInput(ns("compare"),label = "Column compare",
+                   choices =c(Choose = "", NULL),
+                   options = list(placeholder = 'Please select a variable below')),
+    #selectizeInput(ns("varCompare"),label = "Var Compare",choices =c(Choose = "", NULL),multiple=TRUE,
+    #               options = list(placeholder = 'Please select a variable below')),
+    selectizeInput(ns("filter"),label = "Filter column",choices =c(Choose = "", NULL),
+                   options = list(placeholder = 'Please select a variable below')),
+    selectizeInput(ns("filterVars"),label = "Filter Vars",choices =c(Choose = "", NULL),multiple=TRUE,
+                   options = list(placeholder = 'Please select a variable below')),
+    selectizeInput(ns("id"),label = "id",choices =c(Choose = "", NULL),
+                   options = list(placeholder = 'Please select a variable below')),
     actionButton(ns("compute"),label = "Compute")
     
   )
@@ -108,7 +114,10 @@ mod_config_server <- function(id,metaData,expressionData){
     #   cat(result)
     #   return(result) 
     # })
-    return(input)
+    result <- NULL
+    result$session <- session
+    result$input <- input
+    return(result)
   })
 
 }
