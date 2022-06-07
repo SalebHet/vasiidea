@@ -243,7 +243,7 @@ mod_result_server <- function(id,parent,parentSession){
       design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,parent$compare,drop = FALSE]))
       #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
       #browser()
-      res_genes <- dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,2,drop = FALSE],
+      res_genes <- dearseq::dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,2,drop = FALSE],
                       covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis$Sample.name,which_test = "asymptotic")
       
       

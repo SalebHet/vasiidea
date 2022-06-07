@@ -9,7 +9,7 @@
 #' @importFrom golem with_golem_options 
 run_app <- function(
   onStart = NULL,
-  options = list(), 
+  options = list(port=8080,host="0.0.0.0"),
   enableBookmarking = NULL,
   uiPattern = "/",
   ...
@@ -19,10 +19,15 @@ run_app <- function(
       ui = app_ui,
       server = app_server,
       onStart = onStart,
-      options = options, 
-      enableBookmarking = enableBookmarking, 
+      options = options,
+      enableBookmarking = enableBookmarking,
       uiPattern = uiPattern
-    ), 
+    ),
     golem_opts = list(...)
   )
 }
+#' #' @export
+#' #' @importFrom shiny runApp
+#' run_app <- function(...) {
+#'   shiny::runApp(system.file("app", package = "VASIDEA"),port=3838 ,host="0.0.0.0",...)
+#' }
