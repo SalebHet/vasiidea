@@ -64,6 +64,8 @@ mod_config_ui <- function(id){
                    options = list(placeholder = 'Please select a variable below')),
     selectizeInput(ns("id"),label = "id",choices =c(Choose = "", NULL),
                    options = list(placeholder = 'Please select a variable below')),
+    selectizeInput(ns("sample"),label = "sample",choices =c(Choose = "", NULL),
+                   options = list(placeholder = 'Please select a variable below')),
     actionButton(ns("compute"),label = "Compute")
     
   )

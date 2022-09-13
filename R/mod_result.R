@@ -77,7 +77,18 @@ mod_result_server <- function(id,parent,parentSession){
 
     observeEvent(parent$UploadMatrice,{
       inFile <- parent$expr
-      expressionData <<- read.csv(inFile$datapath)
+      #expressionData <<- read.csv(inFile$datapath)
+      expressionFile <- read.csv(inFile$datapath)
+      library(janitor)
+      #browser()
+      #labkey.data <- labkey.data[,-which(names(labkey.data) %in% c("Specimen ID","Participant ID","Visit ID","Date","Target Study"))]#subset(labkey.data,-c("Specimen ID","Participant ID","Visit ID","Date"))
+      #browser()
+      expressionFile <- t(as.matrix(expressionFile))
+      expressionFile <- as.data.frame(expressionFile)
+      expressionFile <- janitor::row_to_names(expressionFile,1)
+      #browser()
+      expressionData <<- expressionFile
+      cat(str(expressionData))
       cat("ExprData Uploaded")
       #output$metadata <- DT::renderDataTable(metaData)
     })
@@ -103,65 +114,110 @@ mod_result_server <- function(id,parent,parentSession){
       #return(result) 
     })
     
-    # library('Rlabkey')
-    # observe({
-    #   query <- parseQueryString(session$clientData$url_search)
-    #   if (!is.null(query[['key']])) {
-    #     
-    #     #updateSliderInput(session, "bins", value = query[['bins']])
-    #     key <<- query[['key']]
-    #     set <<- paste0("apikey|",key)
-    #     
-    #     Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
-    #     Rlabkey::labkey.setDefaults(baseUrl = "https://labkey.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
-    #     labkey.data <- labkey.selectRows(
-    #       baseUrl="https://labkey.bph.u-bordeaux.fr", 
-    #       #folderPath="/EBOVAC/assays/EBL2001/ICS", 
-    #       folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
-    #       schemaName="assay.General.MetaData-RNAseq", 
-    #       queryName="data", 
-    #       viewName="", 
-    #       colSort="", 
-    #       #colFilter=makeFilter(c("Run/RowId", "EQUAL", "140"),c("Antigen", "NOT_EQUAL_OR_MISSING", "Negative control")), 
-    #       containerFilter=NULL
-    #     )
-    #     
-    #     cat("Result request metadata => ")
-    #     cat(str(labkey.data),"\n")
-    #     metaData <<- labkey.data
-    #     output$metadata <- DT::renderDataTable(metaData)
-    #   }
-    # })
+     library('Rlabkey')
+     observe({
+       #browser()
+       query <- parseQueryString(session$clientData$url_search)
+       if (!is.null(query[['key']])) {
     
-    # observe({
-    #   query <- parseQueryString(session$clientData$url_search)
-    #   if (!is.null(query[['key']])) {
-    #     
-    #     #updateSliderInput(session, "bins", value = query[['bins']])
-    #     key <<- query[['key']]
-    #     set <<- paste0("apikey|",key)
-    #     
-    #     Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
-    #     Rlabkey::labkey.setDefaults(baseUrl = "https://labkey.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
-    #     labkey.data <- labkey.selectRows(
-    #       baseUrl="https://labkey.bph.u-bordeaux.fr", 
-    #       #folderPath="/EBOVAC/assays/EBL2001/ICS", 
-    #       folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
-    #       schemaName="assay.General.Raw_counts_RNAseq_long", 
-    #       queryName="data", 
-    #       viewName="", 
-    #       colSort="", 
-    #       #colFilter=makeFilter(c("Run/RowId", "EQUAL", "140"),c("Antigen", "NOT_EQUAL_OR_MISSING", "Negative control")), 
-    #       containerFilter=NULL
-    #     )
-    #     
-    #     cat("Result request expression => ")
-    #     cat(as.character(labkey.data),"\n")
-    #     expressionData <<- labkey.data
-    #     #output$metadata <- DT::renderDataTable(expressionData)
-    #   }
-    # })
+         #updateSliderInput(session, "bins", value = query[['bins']])
+         key <<- query[['key']]
+         set <<- paste0("apikey|",key)
     
+         Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
+         Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
+         labkey.data <- labkey.selectRows(
+           baseUrl="https://labk.bph.u-bordeaux.fr",
+           #folderPath="/EBOVAC/assays/EBL2001/ICS",
+           folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
+           #schemaName="assay.General.MetaData-RNAseq",
+           schemaName = "assay.General.MetaData_VASI_DM",
+           queryName="data",
+           viewName="",
+           colSort="",
+           #colFilter=makeFilter(c("Run/RowId", "EQUAL", "140"),c("Antigen", "NOT_EQUAL_OR_MISSING", "Negative control")),
+           containerFilter=NULL
+         )
+    
+         #cat("Result request metadata => ")
+         #cat(str(labkey.data),"\n")
+         labkey.data <- clean_names(labkey.data)
+         metaData <<- labkey.data
+         #browser()
+         lstpossi <- colnames(metaData)
+         #cat('colnames(metaData): \n')
+         #cat(lstpossi)
+         #browser()
+         #cat("parent$compare: ")
+         #cat(str(parent$ns),"\n")
+         updateSelectizeInput(parentSession, "compare",#session, parent$compare,
+                              selected = '',
+                              choices = c('',lstpossi),
+                              options = list(placeholder = 'Please select a variable below')
+         )
+         updateSelectizeInput(parentSession, "filter",#session, parent$filer,#'filter',
+                              selected = '',
+                              choices = c('',lstpossi),
+                              options = list(placeholder = 'Please select a variable below')
+         )
+         updateSelectizeInput(parentSession,"id",#session, parent$id,#'id',
+                              selected = '',
+                              choices = c('',lstpossi),
+                              options = list(placeholder = 'Please select a variable below')
+         )
+         updateSelectizeInput(parentSession,"sample",#session, parent$id,#'id',
+                              selected = '',
+                              choices = c('',lstpossi),
+                              options = list(placeholder = 'Please select a variable below')
+         )
+         
+         output$metadata <- DT::renderDataTable(metaData)
+       }
+     })
+
+     observe({
+       query <- parseQueryString(session$clientData$url_search)
+       if (!is.null(query[['key']])) {
+
+    #     #updateSliderInput(session, "bins", value = query[['bins']])
+         #browser()
+         key <<- query[['key']]
+         set <<- paste0("apikey|",key)
+
+         Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
+         Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
+         labkey.data <- labkey.selectRows(
+           baseUrl="https://labk.bph.u-bordeaux.fr",
+           #folderPath="/EBOVAC/assays/EBL2001/ICS",
+           folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
+           schemaName="assay.General.Count_Matrix_Reverse",
+           queryName="data",
+           viewName="",
+           colSort="",
+           #colFilter=makeFilter(c("Run/RowId", "EQUAL", "140"),c("Antigen", "NOT_EQUAL_OR_MISSING", "Negative control")),
+           containerFilter=NULL
+         )
+         #cat("Result request expression => ")
+         #cat(str(labkey.data),"\n")
+         library(janitor)
+         #browser()
+         labkey.data <- labkey.data[,-which(names(labkey.data) %in% c("Specimen ID","Participant ID","Visit ID","Date","Target Study"))]#subset(labkey.data,-c("Specimen ID","Participant ID","Visit ID","Date"))
+         labkey.data <- t(labkey.data)
+         labkey.data <- as.data.frame(labkey.data)
+         labkey.data <- row_to_names(labkey.data,1)
+         #browser()
+         #cat("Result request expression => ")
+         #cat(str(labkey.data),"\n")
+         #browser()
+         expressionData <<- labkey.data
+         #browser()
+         #cat("Matrix: ")
+         #cat(str(expressionData))
+         #cat(str(metaData))
+         #output$metadata <- DT::renderDataTable(expressionData)
+       }
+     })
+
     # observeEvent(parent$compare,{
     #   available_var <- metaData[,parent$compare]
     #   updateSelectizeInput(parentSession,"varCompare",
@@ -169,16 +225,19 @@ mod_result_server <- function(id,parent,parentSession){
     #                        choices = c('',levels(as.factor(available_var))),
     #                        options = list(placeholder = 'Please select a variable below'))
     # })
-    
+    #browser()
     observeEvent(parent$filter,{
-      available_var <- metaData[,parent$filter]
-      #cat(str(available_var))
-      updateSelectizeInput(parentSession,"filterVars",
-                           selected = '',
-                           choices = c('',levels(as.factor(available_var))),
-                           options = list(placeholder = 'Please select a variable below'))
+      #browser()
+      if(parent$filter != ""){
+        available_var <- metaData[,parent$filter]
+        #cat(str(available_var))
+        updateSelectizeInput(parentSession,"filterVars",
+                             selected = '',
+                             choices = c('',levels(as.factor(available_var))),
+                             options = list(placeholder = 'Please select a variable below'))
+      }
     })
-    
+    #browser()
     observeEvent(parent$compute,{
       library(dplyr)
       cat("\n Click compute ! \n")
@@ -188,7 +247,7 @@ mod_result_server <- function(id,parent,parentSession){
       raw_counts_all <- expressionData
       #raw_counts_all <- as.matrix(expressionData)
       metaDataCom <- as.matrix(metaData)
-      
+
       # metaData$Série.Extraction <- factor(metaData$Série.Extraction, levels = c(1,2,3,4,5,6,7,8,9,10,11))
       # metaData_analysis <- metaData %>% filter(Prick.test...Tempus == "Prick test")
       # design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
@@ -199,30 +258,45 @@ mod_result_server <- function(id,parent,parentSession){
       # res_genes <- dear_seq(exprmat = count_prick,variables2test =  design_prick[,2,drop = FALSE],
       #                       covariates = design_prick[,1,drop = FALSE],
       #                       sample_group =  metaData_analysis$Sample.name,which_test = "asymptotic", which_weights = 'none')
-      
+
       # res_genes <- dear_seq(exprmat=expressionData, covariates=metaData, variables2test=t,
       #                       sample_group=rep(1:ni, each=nr),
       #                       which_test='asymptotic',
       #                       which_weights='none', preprocessed=TRUE)
       #proportion of raw p-values>0.05
-      
+
       rownames(raw_counts_all)<- raw_counts_all[,1]
       rownames(metaDataCom)<-metaDataCom[,1]
       raw_counts_all <- as.data.frame(raw_counts_all[,-1])
+
+      #browser()
       metaDataCom <- metaDataCom[,-1]
       metaDataCom <- as.data.frame(metaDataCom)
       #browser()
-      metaDataCom$Série.Extraction <- factor(metaDataCom$Série.Extraction, levels = c(1,2,3,4,5,6,7,8,9,10,11))
+      metaDataCom[,parent$compare] <- factor(metaDataCom[,parent$compare], unique(metaDataCom[,parent$compare]))#levels = c(1,2,3,4,5,6,7,8,9,10,11))
+      #metaDataCom$Série.Extraction <- factor(metaDataCom[,parent$compare], unique(metaDataCom[,parent$compare]))#levels = c(1,2,3,4,5,6,7,8,9,10,11))
       #filtre <- parent$filterVars
-      metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
+      #browser()
+      #metaData_analysis <- metaDataCom %>% filter(metaDataCom[,parent$filter] == parent$filterVars)
+      #metaData_analysis <- metaDataCom %>% filter(parent$filter == parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
+      metaData_analysis <- metaDataCom %>% filter(.data[[parent$filter]]== parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
       # design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
       # count_prick <- t(as.matrix(raw_counts_all[metaData_analysis$Sample.name.sample.sheet,]))
       count_prick <- t(as.matrix(raw_counts_all[metaData_analysis[,parent$id],]))
+      count_prick <- matrix(as.numeric(count_prick),
+                            ncol = ncol(count_prick))
+      #j <- 1
+      # while (j <= ncol(count_prick)){
+      #   #browser()
+      #   count_prick[,j] = as.numeric(count_prick[,j])
+      #   j = j+1
+      # }
       #browser()
       i<-1
       #browser()
       while(i <= nrow(metaData_analysis)){
         if(is.na(metaData_analysis[i,parent$compare])){#if(is.na(metaData_analysis[i,"Série.Extraction"])){
+          #browser()
           nom <- metaData_analysis[i,parent$id]#nom <- metaData_analysis[i,"Sample.name.sample.sheet"]
           cat("nom: ")
           cat(nom)
@@ -232,7 +306,7 @@ mod_result_server <- function(id,parent,parentSession){
           cat("nrow(metaData_analysis): ")
           cat(nrow(metaData_analysis))
           cat("\n")
-          
+
         }else{
           i = i+1
           # cat(i)
@@ -240,14 +314,18 @@ mod_result_server <- function(id,parent,parentSession){
         }
       }
       #cat("Start Compute \n")
-      design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,parent$compare,drop = FALSE]))
+      #browser()
+      formule <- as.formula(paste0("~",parent$compare))
+      design_prick <- as.matrix(model.matrix(formule,data = metaData_analysis[,parent$compare,drop = FALSE]))
+      
+      #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,parent$compare,drop = FALSE]))
       #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
       #browser()
       res_genes <- dearseq::dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,2,drop = FALSE],
-                      covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis$Sample.name,which_test = "asymptotic")
-      
-      
-      
+                      covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis[,parent$sample],which_test = "asymptotic")
+
+
+
       cat("res: ")
       cat(str(res_genes))
       mean(res_genes$pvals[, 'rawPval']>0.05)
@@ -256,8 +334,8 @@ mod_result_server <- function(id,parent,parentSession){
       #proportion of raw p-values<0.05 i.e. proportion of DE genes
       res <- mean(res_genes$pvals[, 'rawPval']<0.05)
       output$contents <- DT::renderDataTable(res_genes$pvals)
-      #output$result <- renderPlot(plot(res_genes$pvals)) 
-      output$result <- renderPlot(plot(res_genes)) 
+      #output$result <- renderPlot(plot(res_genes$pvals))
+      output$result <- renderPlot(plot(res_genes))
       #browser()
     })
  
