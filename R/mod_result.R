@@ -9,11 +9,11 @@
 #' @importFrom shiny NS tagList 
 mod_result_ui <- function(id){
   ns <- NS(id)
-  
+  library(shinycssloaders)
   tagList(
     tabsetPanel(type = "tabs", id=ns("tabPanel"),
-                tabPanel("MetaData",DT::dataTableOutput(ns("metadata"))),
-                tabPanel("Graph",plotOutput(ns("result"))),
+                tabPanel("MetaData",shinycssloaders::withSpinner(DT::dataTableOutput(ns("metadata")))),
+                tabPanel("Graph",shinycssloaders::withSpinner(plotOutput(ns("result")))),
                 tabPanel("result",DT::dataTableOutput(ns("contents")))
     )
   )
@@ -241,6 +241,8 @@ mod_result_server <- function(id,parent,parentSession){
     observeEvent(parent$compute,{
       library(dplyr)
       cat("\n Click compute ! \n")
+      updateTabsetPanel(session, "tabPanel",
+                        selected = "Graph")
       #cat("expressionData: ")
       #cat(str(expressionData))
       #browser()
@@ -326,8 +328,8 @@ mod_result_server <- function(id,parent,parentSession){
 
 
 
-      cat("res: ")
-      cat(str(res_genes))
+      # cat("res: ")
+      # cat(str(res_genes))
       mean(res_genes$pvals[, 'rawPval']>0.05)
       #quantiles of raw p-values
       quantile(res_genes$pvals[, 'rawPval'])
@@ -336,6 +338,8 @@ mod_result_server <- function(id,parent,parentSession){
       output$contents <- DT::renderDataTable(res_genes$pvals)
       #output$result <- renderPlot(plot(res_genes$pvals))
       output$result <- renderPlot(plot(res_genes))
+      
+
       #browser()
     })
  

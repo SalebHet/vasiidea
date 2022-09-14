@@ -13,46 +13,47 @@ mod_config_ui <- function(id){
     
     
     # Input: Select a file ----
-    fileInput(ns("expr"), "Load expression data",
-              multiple = FALSE,
-              accept = c("text/csv",
-                         "text/comma-separated-values,text/plain",
-                         ".csv",
-                         ".txt"
-              )),
-    actionButton(ns("UploadMatrice"), label = "Upload"),
-    actionButton(ns("createExpression"),label = "generate ExpressionData"),
-    
-    # Input: Select separator ----
-    radioButtons(ns("sep_expr"), "Separator",
-                 choices = c(Comma = ",",
-                             Semicolon = ";",
-                             Tab = "\t"),
-                 selected = ","),
+    # fileInput(ns("expr"), "Load expression data",
+    #           multiple = FALSE,
+    #           accept = c("text/csv",
+    #                      "text/comma-separated-values,text/plain",
+    #                      ".csv",
+    #                      ".txt"
+    #           )),
+    # actionButton(ns("UploadMatrice"), label = "Upload"),
+    # actionButton(ns("createExpression"),label = "generate ExpressionData"),
+    # 
+    # # Input: Select separator ----
+    # radioButtons(ns("sep_expr"), "Separator",
+    #              choices = c(Comma = ",",
+    #                          Semicolon = ";",
+    #                          Tab = "\t"),
+    #              selected = ","),
     
     #),
     
     #sidebarPanel(
     
     # Horizontal line ----
-    tags$hr(),
+    # tags$hr(),
+    # 
+    # # Input: Select a file ----
+    # fileInput(ns("design"), "Load metadata",
+    #           multiple = FALSE,
+    #           accept = c("text/csv",
+    #                      "text/comma-separated-values,text/plain",
+    #                      ".csv",
+    #                      ".txt"
+    #           )),
+    # actionButton(ns("UploadMeta"), label = "Upload"),
+    # actionButton(ns("createMeta"),label = "generate metaData"),
+    # # Input: Select separator ----
+    # radioButtons(ns("sep_design"), "Separator",
+    #              choices = c(Comma = ",",
+    #                          Semicolon = ";",
+    #                          Tab = "\t"),
+    #              selected = ","),
     
-    # Input: Select a file ----
-    fileInput(ns("design"), "Load metadata",
-              multiple = FALSE,
-              accept = c("text/csv",
-                         "text/comma-separated-values,text/plain",
-                         ".csv",
-                         ".txt"
-              )),
-    actionButton(ns("UploadMeta"), label = "Upload"),
-    actionButton(ns("createMeta"),label = "generate metaData"),
-    # Input: Select separator ----
-    radioButtons(ns("sep_design"), "Separator",
-                 choices = c(Comma = ",",
-                             Semicolon = ";",
-                             Tab = "\t"),
-                 selected = ","),
     selectizeInput(ns("compare"),label = "Column compare",
                    choices =c(Choose = "", NULL),
                    options = list(placeholder = 'Please select a variable below')),
