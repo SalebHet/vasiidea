@@ -13,8 +13,16 @@ mod_result_ui <- function(id){
   tagList(
     tabsetPanel(type = "tabs", id=ns("tabPanel"),
                 tabPanel("MetaData",shinycssloaders::withSpinner(DT::dataTableOutput(ns("metadata")))),
-                tabPanel("Graph",shinycssloaders::withSpinner(plotOutput(ns("result")))),
-                tabPanel("result",DT::dataTableOutput(ns("contents")))
+                tabPanel("Graph",shinycssloaders::withSpinner(plotOutput(ns("result"))),
+                         downloadButton(ns("DownloadPlot"),"Download Plots")),
+                tabPanel("result",
+                         fluidRow(
+                           column(4,
+                            textInput(ns("minPval"),label = "Min Pvalue",value = 0)),
+                           column(4,
+                            textInput(ns("maxPval"),label = "Max Pvalue",value = 1))),
+                         DT::dataTableOutput(ns("contents")),
+                         downloadButton(ns("DownloadTable"),label = "Download Table"))
     )
   )
 }
@@ -141,7 +149,7 @@ mod_result_server <- function(id,parent,parentSession){
     
          #cat("Result request metadata => ")
          #cat(str(labkey.data),"\n")
-         labkey.data <- clean_names(labkey.data)
+         labkey.data <- janitor::clean_names(labkey.data)
          metaData <<- labkey.data
          #browser()
          lstpossi <- colnames(metaData)
@@ -327,7 +335,7 @@ mod_result_server <- function(id,parent,parentSession){
                       covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis[,parent$sample],which_test = "asymptotic")
 
 
-
+      #browser()
       # cat("res: ")
       # cat(str(res_genes))
       mean(res_genes$pvals[, 'rawPval']>0.05)
@@ -335,11 +343,46 @@ mod_result_server <- function(id,parent,parentSession){
       quantile(res_genes$pvals[, 'rawPval'])
       #proportion of raw p-values<0.05 i.e. proportion of DE genes
       res <- mean(res_genes$pvals[, 'rawPval']<0.05)
-      output$contents <- DT::renderDataTable(res_genes$pvals)
+      pvals <- res_genes$pvals
+      output$contents <- DT::renderDataTable(pvals, options = list(
+        order = list(list(2,"asc"))
+      ))
+      
       #output$result <- renderPlot(plot(res_genes$pvals))
       output$result <- renderPlot(plot(res_genes))
       
-
+      output$DownloadTable <- downloadHandler(
+        filename = function(){"dearseq_results.csv"},
+        content = function(fname){
+          cat("DownloadTable")
+          write.csv(pvals,fname)
+        }
+      )
+      
+      output$DownloadPlot <- downloadHandler(
+        filename = function(){"dearseq_plots.png"},
+        content = function(file){
+          cat("Download Plots")
+          ggsave(file,plot(res_genes))
+        }
+      )
+      
+      observeEvent(input$minPval,{
+        #browser()
+        pvals <<- res_genes$pvals %>% filter(adjPval>as.numeric(input$minPval) & adjPval<as.numeric(input$maxPval))
+        output$contents <- DT::renderDataTable(pvals, options = list(
+          order = list(list(2,"asc"))))
+        })
+      
+      observeEvent(input$maxPval,{
+        #browser()
+        pvals <<- res_genes$pvals %>% filter(adjPval>as.numeric(input$minPval) & adjPval<as.numeric(input$maxPval))
+        output$contents <- DT::renderDataTable(pvals, options = list(
+          order = list(list(2,"asc"))))
+      })
+      
+      #REGARDE SUMMARY.DEARSEQ POUR AJOUTER NOM GENE TABLEAU RESULTATS
+      
       #browser()
     })
  
