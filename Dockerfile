@@ -11,6 +11,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD5
 RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
 RUN apt -y install r-base
 #RUN systmctl start timedatectl
+
 RUN R -e 'install.packages("remotes")'
 #RUN R -e 'remotes::install_github("r-lib/remotes", ref = "97bbf81")'
 RUN R -e 'remotes::install_cran("cowplot")'
@@ -29,8 +30,8 @@ RUN R -e 'remotes::install_cran("shinycssloaders")'
 #RUN R -e 'remotes::install_cran("golem")'
 RUN R -e 'install.packages("golem")'
 RUN R -e 'install.packages("BiocManager")'
-RUN R -e 'BiocManager::install(version = "3.15")'
-RUN Rscript -e 'BiocManager::install("dearseq")'
+RUN R -e 'BiocManager::install(version = "3.16", ask = FALSE, update = TRUE)'
+RUN R -e 'BiocManager::install("dearseq")'
 COPY VASIDEA_*.tar.gz /app.tar.gz
 
 RUN R -e 'remotes::install_local("/app.tar.gz")'
