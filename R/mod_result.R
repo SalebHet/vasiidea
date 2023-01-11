@@ -131,8 +131,8 @@ mod_result_server <- function(id,parent,parentSession){
          #updateSliderInput(session, "bins", value = query[['bins']])
          key <<- query[['key']]
          set <<- paste0("apikey|",key)
-         meta <<- query[['meta']]
-         subF <<- query[['sub']]
+         # meta <<- query[['meta']]
+         # subF <<- query[['sub']]
     
          Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
          Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
@@ -193,8 +193,8 @@ mod_result_server <- function(id,parent,parentSession){
          #browser()
          key <<- query[['key']]
          set <<- paste0("apikey|",key)
-         count <<- query[['count']]
-         subF <<- query[['sub']]
+         # count <<- query[['count']]
+         # subF <<- query[['sub']]
 
          Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
          Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
@@ -310,7 +310,7 @@ mod_result_server <- function(id,parent,parentSession){
       #browser()
       while(i <= nrow(metaData_analysis)){
         if(is.na(metaData_analysis[i,parent$compare])){#if(is.na(metaData_analysis[i,"Série.Extraction"])){
-          #browser()
+          browser()
           nom <- metaData_analysis[i,parent$id]#nom <- metaData_analysis[i,"Sample.name.sample.sheet"]
           cat("nom: ")
           cat(nom)
@@ -339,7 +339,7 @@ mod_result_server <- function(id,parent,parentSession){
                       covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis[,parent$sample],which_test = "asymptotic")
 
 
-      #browser()
+      browser()
       # cat("res: ")
       # cat(str(res_genes))
       mean(res_genes$pvals[, 'rawPval']>0.05)
