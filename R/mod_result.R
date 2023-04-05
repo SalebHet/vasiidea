@@ -55,72 +55,72 @@ mod_result_server <- function(id,parent,parentSession){
     metaData <- NULL
     expressionData <- NULL
     
-    observeEvent(parent$UploadMeta,{
-      inFile <- parent$design
-      metaData <<- read.csv(inFile$datapath)
-      #cat(str(metaData))
-      lstpossi <- colnames(metaData)
-      #cat('colnames(metaData): \n')
-      #cat(lstpossi)
-      #browser()
-      #cat("parent$compare: ")
-      #cat(str(parent$ns),"\n")
-      updateSelectizeInput(parentSession, "compare",#session, parent$compare,
-                           selected = '',
-                           choices = c('',lstpossi),
-                           options = list(placeholder = 'Please select a variable below')
-      )
-      updateSelectizeInput(parentSession, "filter",#session, parent$filer,#'filter',
-                           selected = '',
-                           choices = c('',lstpossi),
-                           options = list(placeholder = 'Please select a variable below')
-      )
-      updateSelectizeInput(parentSession,"id",#session, parent$id,#'id',
-                           selected = '',
-                           choices = c('',lstpossi),
-                           options = list(placeholder = 'Please select a variable below')
-      )
-      output$metadata <- DT::renderDataTable(metaData)
-    })
-
-    observeEvent(parent$UploadMatrice,{
-      inFile <- parent$expr
-      #expressionData <<- read.csv(inFile$datapath)
-      expressionFile <- read.csv(inFile$datapath)
-      library(janitor)
-      #browser()
-      #labkey.data <- labkey.data[,-which(names(labkey.data) %in% c("Specimen ID","Participant ID","Visit ID","Date","Target Study"))]#subset(labkey.data,-c("Specimen ID","Participant ID","Visit ID","Date"))
-      #browser()
-      expressionFile <- t(as.matrix(expressionFile))
-      expressionFile <- as.data.frame(expressionFile)
-      expressionFile <- janitor::row_to_names(expressionFile,1)
-      #browser()
-      expressionData <<- expressionFile
-      cat(str(expressionData))
-      cat("ExprData Uploaded")
-      #output$metadata <- DT::renderDataTable(metaData)
-    })
-    
-    observeEvent(parent$createMeta,{
-      #cat("click")
-      metaData <<- matrix(1, ncol=1, nrow=r)
-      #cat("metaData: ")
-      #cat(str(metaData))
-      #result <<- c(result,metaData)
-      output$metadata <- DT::renderDataTable(metaData)
-    })
-    
-    observeEvent(parent$createExpression,{
-      y.tilde <- b0 + b1*t + rnorm(r, sd = sigma)
-      expressionData <<- t(matrix(rnorm(n*r, sd = sqrt(sigma*abs(y.tilde))), ncol=n, nrow=r) +
-                             matrix(rep(y.tilde, n), ncol=n, nrow=r))
-      #result <<- c(result,expressionData)
-      #cat("expressionData: \n")
-      #cat(str(expressionData))
-      #cat("End mod_config: ")
-      #cat(result)
-      #return(result) 
-    })
+    # observeEvent(parent$UploadMeta,{
+    #   inFile <- parent$design
+    #   metaData <<- read.csv(inFile$datapath)
+    #   #cat(str(metaData))
+    #   lstpossi <- colnames(metaData)
+    #   #cat('colnames(metaData): \n')
+    #   #cat(lstpossi)
+    #   #browser()
+    #   #cat("parent$compare: ")
+    #   #cat(str(parent$ns),"\n")
+    #   updateSelectizeInput(parentSession, "compare",#session, parent$compare,
+    #                        selected = '',
+    #                        choices = c('',lstpossi),
+    #                        options = list(placeholder = 'Please select a variable below')
+    #   )
+    #   updateSelectizeInput(parentSession, "filter",#session, parent$filer,#'filter',
+    #                        selected = '',
+    #                        choices = c('',lstpossi),
+    #                        options = list(placeholder = 'Please select a variable below')
+    #   )
+    #   updateSelectizeInput(parentSession,"id",#session, parent$id,#'id',
+    #                        selected = '',
+    #                        choices = c('',lstpossi),
+    #                        options = list(placeholder = 'Please select a variable below')
+    #   )
+    #   output$metadata <- DT::renderDataTable(metaData)
+    # })
+    # 
+    # observeEvent(parent$UploadMatrice,{
+    #   inFile <- parent$expr
+    #   #expressionData <<- read.csv(inFile$datapath)
+    #   expressionFile <- read.csv(inFile$datapath)
+    #   library(janitor)
+    #   #browser()
+    #   #labkey.data <- labkey.data[,-which(names(labkey.data) %in% c("Specimen ID","Participant ID","Visit ID","Date","Target Study"))]#subset(labkey.data,-c("Specimen ID","Participant ID","Visit ID","Date"))
+    #   #browser()
+    #   expressionFile <- t(as.matrix(expressionFile))
+    #   expressionFile <- as.data.frame(expressionFile)
+    #   expressionFile <- janitor::row_to_names(expressionFile,1)
+    #   #browser()
+    #   expressionData <<- expressionFile
+    #   cat(str(expressionData))
+    #   cat("ExprData Uploaded")
+    #   #output$metadata <- DT::renderDataTable(metaData)
+    # })
+    # 
+    # observeEvent(parent$createMeta,{
+    #   #cat("click")
+    #   metaData <<- matrix(1, ncol=1, nrow=r)
+    #   #cat("metaData: ")
+    #   #cat(str(metaData))
+    #   #result <<- c(result,metaData)
+    #   output$metadata <- DT::renderDataTable(metaData)
+    # })
+    # 
+    # observeEvent(parent$createExpression,{
+    #   y.tilde <- b0 + b1*t + rnorm(r, sd = sigma)
+    #   expressionData <<- t(matrix(rnorm(n*r, sd = sqrt(sigma*abs(y.tilde))), ncol=n, nrow=r) +
+    #                          matrix(rep(y.tilde, n), ncol=n, nrow=r))
+    #   #result <<- c(result,expressionData)
+    #   #cat("expressionData: \n")
+    #   #cat(str(expressionData))
+    #   #cat("End mod_config: ")
+    #   #cat(result)
+    #   #return(result) 
+    # })
     
      library('Rlabkey')
      observe({
@@ -133,15 +133,21 @@ mod_result_server <- function(id,parent,parentSession){
          set <<- paste0("apikey|",key)
          meta <<- query[['meta']]
          subF <<- query[['sub']]
-    
+         cat("key: ")
+         cat(key,"\n")
+         cat("folder: ")
+         cat(subF,"\n")
+         cat("SchemaName: ")
+         cat(paste0("assay.General",meta),"\n")
          Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
          Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
          labkey.data <- labkey.selectRows(
            baseUrl="https://labk.bph.u-bordeaux.fr",
            #folderPath="/EBOVAC/assays/EBL2001/ICS",
-           folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
+           #folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
+           folderPath = subF,
            #schemaName="assay.General.MetaData-RNAseq",
-           schemaName = "assay.General.MetaData_VASI_DM",#paste0("assay.General",meta)
+           schemaName = paste0("assay.General.",meta),
            queryName="data",
            viewName="",
            colSort="",
@@ -151,8 +157,9 @@ mod_result_server <- function(id,parent,parentSession){
     
          #cat("Result request metadata => ")
          #cat(str(labkey.data),"\n")
+         #browser()
          labkey.data <- janitor::clean_names(labkey.data)
-         metaData <<- labkey.data
+         metaData <<- labkey.data[,-(1:4)]
          #browser()
          lstpossi <- colnames(metaData)
          #cat('colnames(metaData): \n')
@@ -201,8 +208,9 @@ mod_result_server <- function(id,parent,parentSession){
          labkey.data <- labkey.selectRows(
            baseUrl="https://labk.bph.u-bordeaux.fr",
            #folderPath="/EBOVAC/assays/EBL2001/ICS",
-           folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
-           schemaName="assay.General.Count_Matrix_Reverse",
+           #folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
+           folderPath = subF,
+           schemaName=paste0("assay.General.",count),#"assay.General.Count_Matrix_Reverse",
            queryName="data",
            viewName="",
            colSort="",
@@ -261,7 +269,7 @@ mod_result_server <- function(id,parent,parentSession){
       raw_counts_all <- expressionData
       #raw_counts_all <- as.matrix(expressionData)
       metaDataCom <- as.matrix(metaData)
-
+      #browser()
       # metaData$Série.Extraction <- factor(metaData$Série.Extraction, levels = c(1,2,3,4,5,6,7,8,9,10,11))
       # metaData_analysis <- metaData %>% filter(Prick.test...Tempus == "Prick test")
       # design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
@@ -279,12 +287,14 @@ mod_result_server <- function(id,parent,parentSession){
       #                       which_weights='none', preprocessed=TRUE)
       #proportion of raw p-values>0.05
 
-      rownames(raw_counts_all)<- raw_counts_all[,1]
-      rownames(metaDataCom)<-metaDataCom[,1]
-      raw_counts_all <- as.data.frame(raw_counts_all[,-1])
+      
+      #Dernier Changement
+      #rownames(raw_counts_all)<- raw_counts_all[,1]
+      #rownames(metaDataCom)<-metaDataCom[,1] 
+      #raw_counts_all <- as.data.frame(raw_counts_all[,-1])
 
       #browser()
-      metaDataCom <- metaDataCom[,-1]
+      #metaDataCom <- metaDataCom[,-1]
       metaDataCom <- as.data.frame(metaDataCom)
       #browser()
       metaDataCom[,parent$compare] <- factor(metaDataCom[,parent$compare], unique(metaDataCom[,parent$compare]))#levels = c(1,2,3,4,5,6,7,8,9,10,11))
@@ -294,8 +304,10 @@ mod_result_server <- function(id,parent,parentSession){
       #metaData_analysis <- metaDataCom %>% filter(metaDataCom[,parent$filter] == parent$filterVars)
       #metaData_analysis <- metaDataCom %>% filter(parent$filter == parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
       metaData_analysis <- metaDataCom %>% filter(.data[[parent$filter]]== parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
+      #browser()
       # design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
       # count_prick <- t(as.matrix(raw_counts_all[metaData_analysis$Sample.name.sample.sheet,]))
+      #browser()
       count_prick <- t(as.matrix(raw_counts_all[metaData_analysis[,parent$id],]))
       count_prick <- matrix(as.numeric(count_prick),
                             ncol = ncol(count_prick))
@@ -335,11 +347,10 @@ mod_result_server <- function(id,parent,parentSession){
       #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,parent$compare,drop = FALSE]))
       #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
       #browser()
-      res_genes <- dearseq::dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,2,drop = FALSE],
+      res_genes <- dearseq::dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,-1,drop = FALSE],
                       covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis[,parent$sample],which_test = "asymptotic")
 
 
-      #browser()
       # cat("res: ")
       # cat(str(res_genes))
       mean(res_genes$pvals[, 'rawPval']>0.05)
@@ -386,7 +397,7 @@ mod_result_server <- function(id,parent,parentSession){
       })
       
       #REGARDE SUMMARY.DEARSEQ POUR AJOUTER NOM GENE TABLEAU RESULTATS
-      
+      #Revoir test 0 genes sélectionné actuellement 
       #browser()
     })
  
