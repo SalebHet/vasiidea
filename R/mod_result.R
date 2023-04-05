@@ -311,6 +311,8 @@ mod_result_server <- function(id,parent,parentSession){
       count_prick <- t(as.matrix(raw_counts_all[metaData_analysis[,parent$id],]))
       count_prick <- matrix(as.numeric(count_prick),
                             ncol = ncol(count_prick))
+      colnames(count_prick) <- metaData_analysis[,parent$id]
+      rownames(count_prick) <- colnames(raw_counts_all)
       #j <- 1
       # while (j <= ncol(count_prick)){
       #   #browser()
@@ -358,8 +360,11 @@ mod_result_server <- function(id,parent,parentSession){
       quantile(res_genes$pvals[, 'rawPval'])
       #proportion of raw p-values<0.05 i.e. proportion of DE genes
       res <- mean(res_genes$pvals[, 'rawPval']<0.05)
+      sumRes <- summary(res_genes)
+      datatoshow <- data.frame("genes_SYMBOL" = sumRes$which_signif, "adjusted_pvalues" = sumRes$adj_pval)
+      browser()
       pvals <- res_genes$pvals
-      output$contents <- DT::renderDataTable(pvals, options = list(
+      output$contents <- DT::renderDataTable(datatoshow, options = list(
         order = list(list(2,"asc"))
       ))
       
