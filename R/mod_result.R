@@ -139,7 +139,7 @@ mod_result_server <- function(id,parent,parentSession){
          cat(subF,"\n")
          cat("SchemaName: ")
          cat(paste0("assay.General",meta),"\n")
-         Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
+         Rlabkey::labkey.setDefaults(apiKey=key)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
          Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
          labkey.data <- labkey.selectRows(
            baseUrl="https://labk.bph.u-bordeaux.fr",
@@ -361,10 +361,13 @@ mod_result_server <- function(id,parent,parentSession){
       #proportion of raw p-values<0.05 i.e. proportion of DE genes
       res <- mean(res_genes$pvals[, 'rawPval']<0.05)
       sumRes <- summary(res_genes)
+      for (k in 1:length(sumRes)) {
+        sumRes$which_signif[k] <- paste0('<a href="https://ncbi.nlm.nih.gov/gene/?term="',sumRes$which_signif[k], 'target="_blank" class="btn btn-primary">',sumRes$which_signif[k],'</a>')
+      }
       datatoshow <- data.frame("genes_SYMBOL" = sumRes$which_signif, "adjusted_pvalues" = sumRes$adj_pval)
-      browser()
+      #browser()
       pvals <- res_genes$pvals
-      output$contents <- DT::renderDataTable(datatoshow, options = list(
+      output$contents <- DT::renderDataTable(DT::datatable(datatoshow,escape = FALSE),server = FALSE, options = list(
         order = list(list(2,"asc"))
       ))
       
@@ -386,6 +389,12 @@ mod_result_server <- function(id,parent,parentSession){
           ggsave(file,plot(res_genes))
         }
       )
+      
+      # observeEvent(input$contents_rows_selected,{
+      #   rowClicked = input$contents_rows_selected
+      #   #URL "https://ncbi.nlm.nih.gov/gene/?term= gene"
+      #   browser()
+      # })
       
       observeEvent(input$minPval,{
         #browser()
