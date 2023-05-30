@@ -26,7 +26,7 @@ RUN R -e 'remotes::install_cran("janitor")'
 RUN R -e 'remotes::install_cran("shinycssloaders")'
 RUN R -e 'install.packages("golem")'
 RUN R -e 'install.packages("BiocManager")'
-RUN R -e 'BiocManager::install(version = "3.16", ask = FALSE, update = TRUE)'
+RUN R -e 'BiocManager::install(version = "3.17", ask = FALSE, update = TRUE)'
 RUN R -e 'BiocManager::install("dearseq")'
 COPY VASIDEA_*.tar.gz /app.tar.gz
 
