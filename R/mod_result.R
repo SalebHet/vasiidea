@@ -203,7 +203,7 @@ mod_result_server <- function(id,parent,parentSession){
          count <<- query[['count']]
          subF <<- query[['sub']]
 
-         Rlabkey::labkey.setDefaults(apiKey=set)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
+         Rlabkey::labkey.setDefaults(apiKey=key)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
          Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
          labkey.data <- labkey.selectRows(
            baseUrl="https://labk.bph.u-bordeaux.fr",
