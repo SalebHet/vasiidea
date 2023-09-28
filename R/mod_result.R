@@ -160,6 +160,8 @@ mod_result_server <- function(id,parent,parentSession){
          #browser()
          labkey.data <- janitor::clean_names(labkey.data)
          metaData <<- labkey.data[,-(1:4)]
+         cat("metaData: ")
+         cat(str(metaData))
          #browser()
          lstpossi <- colnames(metaData)
          #cat('colnames(metaData): \n')
@@ -231,9 +233,8 @@ mod_result_server <- function(id,parent,parentSession){
          #browser()
          expressionData <<- labkey.data
          #browser()
-         #cat("Matrix: ")
-         #cat(str(expressionData))
-         #cat(str(metaData))
+         cat("Matrix: ")
+         cat(str(expressionData))
          #output$metadata <- DT::renderDataTable(expressionData)
        }
      })
