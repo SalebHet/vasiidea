@@ -290,9 +290,9 @@ mod_result_server <- function(id,parent,parentSession){
 
       
       #Dernier Changement
-      #rownames(raw_counts_all)<- raw_counts_all[,1]
-      #rownames(metaDataCom)<-metaDataCom[,1] 
-      #raw_counts_all <- as.data.frame(raw_counts_all[,-1])
+      rownames(raw_counts_all)<- raw_counts_all[,1]
+      rownames(metaDataCom)<-metaDataCom[,1]
+      raw_counts_all <- as.data.frame(raw_counts_all[,-1])
 
       #browser()
       #metaDataCom <- metaDataCom[,-1]
