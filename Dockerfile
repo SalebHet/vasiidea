@@ -1,4 +1,5 @@
-FROM openanalytics/r-base
+#FROM openanalytics/r-base
+FROM rocker/r-ver:4.3.1
 RUN apt-get update
 RUN apt-get -y install libcurl4-openssl-dev
 RUN apt-get -y install libssl-dev 
