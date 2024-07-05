@@ -133,6 +133,7 @@ mod_result_server <- function(id,parent,parentSession){
          set <<- paste0("apikey|",key)
          meta <<- query[['meta']]
          subF <<- query[['sub']]
+         metaAssayType <<- query[['metaAssayType']]
          cat("key: ")
          cat(key,"\n")
          cat("folder: ")
@@ -147,7 +148,8 @@ mod_result_server <- function(id,parent,parentSession){
            #folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
            folderPath = subF,
            #schemaName="assay.General.MetaData-RNAseq",
-           schemaName = paste0("assay.General.",meta),
+           #schemaName = paste0("assay.General.",meta),
+           schemaName=paste0("assay.",metaAssayType,".",meta),
            queryName="data",
            viewName="",
            colSort="",
@@ -204,6 +206,8 @@ mod_result_server <- function(id,parent,parentSession){
          set <<- paste0("apikey|",key)
          count <<- query[['count']]
          subF <<- query[['sub']]
+         expressionAssayType <<- query[['expressionAssayType']]
+         metaAssayType <<- query[['metaAssayType']]
 
          Rlabkey::labkey.setDefaults(apiKey=key)#"apikey|73ea3ff0973f38d52f5b1bbd8980f62c")
          Rlabkey::labkey.setDefaults(baseUrl = "https://labk.bph.u-bordeaux.fr/")#(baseUrl="https://labkey.bph.u-bordeaux.fr:8443/")
@@ -212,7 +216,8 @@ mod_result_server <- function(id,parent,parentSession){
            #folderPath="/EBOVAC/assays/EBL2001/ICS",
            #folderPath="/COVERAGE-Immuno/RNAseq/4-Counts-Matrices/",
            folderPath = subF,
-           schemaName=paste0("assay.General.",count),#"assay.General.Count_Matrix_Reverse",
+           #schemaName=paste0("assay.General.",count),#"assay.General.Count_Matrix_Reverse",
+           schemaName=paste0("assay.",expressionAssayType,".",count),
            queryName="data",
            viewName="",
            colSort="",
