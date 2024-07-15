@@ -7,6 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
+#' @import shinyWidgets
 mod_config_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -53,20 +54,20 @@ mod_config_ui <- function(id){
     #                          Semicolon = ";",
     #                          Tab = "\t"),
     #              selected = ","),
-    
-    selectizeInput(ns("compare"),label = "Column compare",
+    shinyWidgets::materialSwitch(ns("preprocessed"), label = "Preprocessed Data", value = TRUE,status = "primary"),
+    selectizeInput(ns("test"),label = "Column Var Test",
                    choices =c(Choose = "", NULL),
                    options = list(placeholder = 'Please select a variable below')),
     #selectizeInput(ns("varCompare"),label = "Var Compare",choices =c(Choose = "", NULL),multiple=TRUE,
     #               options = list(placeholder = 'Please select a variable below')),
-    selectizeInput(ns("filter"),label = "Filter column",choices =c(Choose = "", NULL),
+    selectizeInput(ns("covariable"),label = "covariable columns",multiple = TRUE,choices =c(Choose = "", NULL),
                    options = list(placeholder = 'Please select a variable below')),
-    selectizeInput(ns("filterVars"),label = "Filter Vars",choices =c(Choose = "", NULL),multiple=TRUE,
-                   options = list(placeholder = 'Please select a variable below')),
-    selectizeInput(ns("id"),label = "id",choices =c(Choose = "", NULL),
-                   options = list(placeholder = 'Please select a variable below')),
-    selectizeInput(ns("sample"),label = "sample",choices =c(Choose = "", NULL),
-                   options = list(placeholder = 'Please select a variable below')),
+    # selectizeInput(ns("filterVars"),label = "Filter Vars",choices =c(Choose = "", NULL),multiple=TRUE,
+    #                options = list(placeholder = 'Please select a variable below')),
+    # selectizeInput(ns("id"),label = "id",choices =c(Choose = "", NULL),
+    #                options = list(placeholder = 'Please select a variable below')),
+    # selectizeInput(ns("sample"),label = "sample",choices =c(Choose = "", NULL),
+    #                options = list(placeholder = 'Please select a variable below')),
     actionButton(ns("compute"),label = "Compute")
     
   )

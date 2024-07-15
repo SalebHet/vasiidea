@@ -171,26 +171,27 @@ mod_result_server <- function(id,parent,parentSession){
          #browser()
          #cat("parent$compare: ")
          #cat(str(parent$ns),"\n")
-         updateSelectizeInput(parentSession, "compare",#session, parent$compare,
+         updateSelectizeInput(parentSession, "test",#session, parent$compare,
                               selected = '',
                               choices = c('',lstpossi),
                               options = list(placeholder = 'Please select a variable below')
          )
-         updateSelectizeInput(parentSession, "filter",#session, parent$filer,#'filter',
+         updateSelectizeInput(parentSession, "covariable",#session, parent$filer,#'filter',
                               selected = '',
+                              #multiple = TRUE,
                               choices = c('',lstpossi),
                               options = list(placeholder = 'Please select a variable below')
          )
-         updateSelectizeInput(parentSession,"id",#session, parent$id,#'id',
-                              selected = '',
-                              choices = c('',lstpossi),
-                              options = list(placeholder = 'Please select a variable below')
-         )
-         updateSelectizeInput(parentSession,"sample",#session, parent$id,#'id',
-                              selected = '',
-                              choices = c('',lstpossi),
-                              options = list(placeholder = 'Please select a variable below')
-         )
+         # updateSelectizeInput(parentSession,"id",#session, parent$id,#'id',
+         #                      selected = '',
+         #                      choices = c('',lstpossi),
+         #                      options = list(placeholder = 'Please select a variable below')
+         # )
+         # updateSelectizeInput(parentSession,"sample",#session, parent$id,#'id',
+         #                      selected = '',
+         #                      choices = c('',lstpossi),
+         #                      options = list(placeholder = 'Please select a variable below')
+         # )
          
          output$metadata <- DT::renderDataTable(metaData)
        }
@@ -229,7 +230,7 @@ mod_result_server <- function(id,parent,parentSession){
          library(janitor)
          #browser()
          labkey.data <- labkey.data[,-which(names(labkey.data) %in% c("Specimen ID","Participant ID","Visit ID","Date","Target Study"))]#subset(labkey.data,-c("Specimen ID","Participant ID","Visit ID","Date"))
-         labkey.data <- t(labkey.data)
+         #labkey.data <- t(labkey.data)
          labkey.data <- as.data.frame(labkey.data)
          labkey.data <- row_to_names(labkey.data,1)
          #browser()
@@ -267,6 +268,7 @@ mod_result_server <- function(id,parent,parentSession){
     observeEvent(parent$compute,{
       library(dplyr)
       cat("\n Click compute ! \n")
+      #browser()
       updateTabsetPanel(session, "tabPanel",
                         selected = "Graph")
       #cat("expressionData: ")
@@ -301,24 +303,24 @@ mod_result_server <- function(id,parent,parentSession){
 
       #browser()
       #metaDataCom <- metaDataCom[,-1]
-      metaDataCom <- as.data.frame(metaDataCom)
-      #browser()
-      metaDataCom[,parent$compare] <- factor(metaDataCom[,parent$compare], unique(metaDataCom[,parent$compare]))#levels = c(1,2,3,4,5,6,7,8,9,10,11))
-      #metaDataCom$Série.Extraction <- factor(metaDataCom[,parent$compare], unique(metaDataCom[,parent$compare]))#levels = c(1,2,3,4,5,6,7,8,9,10,11))
-      #filtre <- parent$filterVars
-      #browser()
-      #metaData_analysis <- metaDataCom %>% filter(metaDataCom[,parent$filter] == parent$filterVars)
-      #metaData_analysis <- metaDataCom %>% filter(parent$filter == parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
-      metaData_analysis <- metaDataCom %>% filter(.data[[parent$filter]]== parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
-      #browser()
-      # design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
-      # count_prick <- t(as.matrix(raw_counts_all[metaData_analysis$Sample.name.sample.sheet,]))
-      #browser()
-      count_prick <- t(as.matrix(raw_counts_all[metaData_analysis[,parent$id],]))
-      count_prick <- matrix(as.numeric(count_prick),
-                            ncol = ncol(count_prick))
-      colnames(count_prick) <- metaData_analysis[,parent$id]
-      rownames(count_prick) <- colnames(raw_counts_all)
+      # metaDataCom <- as.data.frame(metaDataCom)
+      # #browser()
+      # metaDataCom[,parent$compare] <- factor(metaDataCom[,parent$compare], unique(metaDataCom[,parent$compare]))#levels = c(1,2,3,4,5,6,7,8,9,10,11))
+      # #metaDataCom$Série.Extraction <- factor(metaDataCom[,parent$compare], unique(metaDataCom[,parent$compare]))#levels = c(1,2,3,4,5,6,7,8,9,10,11))
+      # #filtre <- parent$filterVars
+      # #browser()
+      # #metaData_analysis <- metaDataCom %>% filter(metaDataCom[,parent$filter] == parent$filterVars)
+      # #metaData_analysis <- metaDataCom %>% filter(parent$filter == parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
+      # metaData_analysis <- metaDataCom %>% filter(.data[[parent$filter]]== parent$filterVars)#metaData_analysis <- metaDataCom %>% filter(Prick.test...Tempus == "Prick test")
+      # #browser()
+      # # design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
+      # # count_prick <- t(as.matrix(raw_counts_all[metaData_analysis$Sample.name.sample.sheet,]))
+      # #browser()
+      # count_prick <- t(as.matrix(raw_counts_all[metaData_analysis[,parent$id],]))
+      # count_prick <- matrix(as.numeric(count_prick),
+      #                       ncol = ncol(count_prick))
+      # colnames(count_prick) <- metaData_analysis[,parent$id]
+      # rownames(count_prick) <- colnames(raw_counts_all)
       #j <- 1
       # while (j <= ncol(count_prick)){
       #   #browser()
@@ -326,39 +328,67 @@ mod_result_server <- function(id,parent,parentSession){
       #   j = j+1
       # }
       #browser()
-      i<-1
-      #browser()
-      while(i <= nrow(metaData_analysis)){
-        if(is.na(metaData_analysis[i,parent$compare])){#if(is.na(metaData_analysis[i,"Série.Extraction"])){
-          #browser()
-          nom <- metaData_analysis[i,parent$id]#nom <- metaData_analysis[i,"Sample.name.sample.sheet"]
-          cat("nom: ")
-          cat(nom)
-          cat("\n")
-          count_prick <- select(as.data.frame(count_prick),-c(nom))
-          metaData_analysis <- metaData_analysis[-c(i),]
-          cat("nrow(metaData_analysis): ")
-          cat(nrow(metaData_analysis))
-          cat("\n")
-
-        }else{
-          i = i+1
-          # cat(i)
-          # cat("\n")
-        }
-      }
+      # i<-1
+      # #browser()
+      # while(i <= nrow(metaData_analysis)){
+      #   if(is.na(metaData_analysis[i,parent$compare])){#if(is.na(metaData_analysis[i,"Série.Extraction"])){
+      #     #browser()
+      #     nom <- metaData_analysis[i,parent$id]#nom <- metaData_analysis[i,"Sample.name.sample.sheet"]
+      #     cat("nom: ")
+      #     cat(nom)
+      #     cat("\n")
+      #     count_prick <- select(as.data.frame(count_prick),-c(nom))
+      #     metaData_analysis <- metaData_analysis[-c(i),]
+      #     cat("nrow(metaData_analysis): ")
+      #     cat(nrow(metaData_analysis))
+      #     cat("\n")
+      # 
+      #   }else{
+      #     i = i+1
+      #     # cat(i)
+      #     # cat("\n")
+      #   }
+      # }
       #cat("Start Compute \n")
       #browser()
-      formule <- as.formula(paste0("~",parent$compare))
-      design_prick <- as.matrix(model.matrix(formule,data = metaData_analysis[,parent$compare,drop = FALSE]))
+      # formule <- as.formula(paste0("~",parent$compare))
+      # design_prick <- as.matrix(model.matrix(formule,data = metaData_analysis[,parent$compare,drop = FALSE]))
       
       #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,parent$compare,drop = FALSE]))
       #design_prick <- as.matrix(model.matrix(~Série.Extraction,data = metaData_analysis[,"Série.Extraction",drop = FALSE]))
       #browser()
-      res_genes <- dearseq::dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,-1,drop = FALSE],
-                      covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis[,parent$sample],which_test = "asymptotic")
+      # res_genes <- dearseq::dear_seq(exprmat = as.matrix(count_prick),variables2test =  design_prick[,-1,drop = FALSE],
+      #                 covariates = design_prick[,1,drop = FALSE],sample_group =  metaData_analysis[,parent$sample],which_test = "asymptotic")
+      valCovMat <- c()
+      #i <- 0
+      for(i in 1:length(metaDataCom[,1])){
+        valCovMat <- c(valCovMat,1)
+      }
+      #browser()
+      covMat <- matrix(valCovMat,nrow = length(metaDataCom[,1]),ncol = 1)
+      if(length(parent$covariable)>0){
+        # #browser()
+        # covMat <- as.numeric(metaDataCom[,parent$covariable])#Faire propre plusieurs colones
+        for(i in 1:length(parent$covariable)){
+          #browser()
+          valCovMat <- NULL
+          valCovMat <- data.frame(matrix(nrow = length(metaDataCom[,1]),ncol = length(parent$covariable)))
+          valCovMat[,i] <- as.numeric(metaDataCom[,parent$covariable[i]])
+        }
+      }
 
-
+      
+      for(i in 1:length(raw_counts_all)){
+        raw_counts_all[,i] <- as.numeric(raw_counts_all[,i])
+      }
+      #Var2Test = Num
+      if(!is.numeric(metaDataCom[,parent$test])){
+        #browser()
+        metaDataCom[,parent$test] <- as.factor(metaDataCom[,parent$test])
+      }
+      #browser()
+      res_genes <- dearseq::dear_seq(exprmat = as.matrix(raw_counts_all),variables2test = as.matrix(as.numeric(metaDataCom[,parent$test])),
+                                     covariates = as.matrix(covMat), preprocessed = parent$preprocessed, which_test = "asymptotic")
       # cat("res: ")
       # cat(str(res_genes))
       mean(res_genes$pvals[, 'rawPval']>0.05)
