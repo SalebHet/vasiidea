@@ -230,9 +230,10 @@ mod_result_server <- function(id,parent,parentSession){
          library(janitor)
          #browser()
          labkey.data <- labkey.data[,-which(names(labkey.data) %in% c("Specimen ID","Participant ID","Visit ID","Date","Target Study"))]#subset(labkey.data,-c("Specimen ID","Participant ID","Visit ID","Date"))
+         #browser()
          #labkey.data <- t(labkey.data)
          labkey.data <- as.data.frame(labkey.data)
-         labkey.data <- row_to_names(labkey.data,1)
+         #labkey.data <- row_to_names(labkey.data,1)
          #browser()
          #cat("Result request expression => ")
          #cat(str(labkey.data),"\n")
@@ -299,8 +300,9 @@ mod_result_server <- function(id,parent,parentSession){
       #Dernier Changement
       rownames(raw_counts_all)<- raw_counts_all[,1]
       rownames(metaDataCom)<-metaDataCom[,1]
-      raw_counts_all <- as.data.frame(raw_counts_all[,-1])
-
+      #raw_counts_all <- t(raw_counts_all) #A sortir
+      raw_counts_all <- as.data.frame(raw_counts_all[,-1]) # inverser [,-1]
+      
       #browser()
       #metaDataCom <- metaDataCom[,-1]
       # metaDataCom <- as.data.frame(metaDataCom)
@@ -397,16 +399,18 @@ mod_result_server <- function(id,parent,parentSession){
       #proportion of raw p-values<0.05 i.e. proportion of DE genes
       res <- mean(res_genes$pvals[, 'rawPval']<0.05)
       sumRes <- summary(res_genes)
-      for (k in 1:length(sumRes)) {
-        sumRes$which_signif[k] <- paste0('<a href="https://ncbi.nlm.nih.gov/gene/?term="',sumRes$which_signif[k], 'target="_blank" class="btn btn-primary">',sumRes$which_signif[k],'</a>')
+      if(length(sumRes$which_signif)>1){
+        for (k in 1:length(sumRes$which_signif)) {
+          sumRes$which_signif[k] <- paste0('<a href="https://ncbi.nlm.nih.gov/gene/?term="',sumRes$which_signif[k], 'target="_blank" class="btn btn-primary">',sumRes$which_signif[k],'</a>')
+        }
+        #browser()
+        datatoshow <- data.frame("genes_SYMBOL" = sumRes$which_signif, "adjusted_pvalues" = sumRes$adj_pval)
+        #browser()
+        pvals <- res_genes$pvals
+        output$contents <- DT::renderDataTable(DT::datatable(datatoshow,escape = FALSE),server = FALSE, options = list(
+          order = list(list(2,"asc"))
+        ))
       }
-      datatoshow <- data.frame("genes_SYMBOL" = sumRes$which_signif, "adjusted_pvalues" = sumRes$adj_pval)
-      #browser()
-      pvals <- res_genes$pvals
-      output$contents <- DT::renderDataTable(DT::datatable(datatoshow,escape = FALSE),server = FALSE, options = list(
-        order = list(list(2,"asc"))
-      ))
-      
       #output$result <- renderPlot(plot(res_genes$pvals))
       output$result <- renderPlot(plot(res_genes))
       
